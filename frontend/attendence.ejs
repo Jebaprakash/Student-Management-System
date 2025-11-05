@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance</title>
+    <style>
+      body{
+       background-color: #fff;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #school-name {
+      text-align: center;
+      padding: 10px;
+      color: #00809D;
+    }
+
+    .nav-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      background-color: #00809D;
+      height: 50px;
+      padding-right: 10px;
+    }
+
+    .nav-btn {
+      background-color: #708993;
+      /* color: white; */
+      border: none;
+      padding: 12px 18px;
+      margin-left: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    .nav-btn:hover {
+      background-color: #607780;
+    }
+
+    table.studentTable {
+      width: 80%;
+      margin: 40px auto;
+      border-collapse: collapse;
+      text-align: center;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    table.studentTable th,
+    table.studentTable td {
+      border: 1px solid #000;
+      padding: 10px;
+    }
+
+    table.studentTable th {
+      background-color: #00809D;
+      color: white;
+    }
+
+    p {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 15px;
+    }
+
+    #totalPresent,
+    #totalAbsent {
+      font-weight: bold;
+      color: #00809D;
+    }
+    </style>
+</head>
+<body>
+    <div>
+   
+   <div id="school-name">
+     <h1>J.P School</h1>
+   </div>
+    <div class="nav-bar">
+   <form action="/student" method="get"><button class="nav-btn"><b>Student</b></button></form>
+    <form action="/attendence" method="get"><button class="nav-btn"><b  style="color: #F0F0F0;">Attendance</b></button></form>
+    <form action="/marks" method="get"><button class="nav-btn"><b>Marks</b></button></form>
+    <form action="/logout" method="get" id="logout" ><button onclick="logout(event)" class="nav-btn"><b>Logout</b></button></form>
+    </div>
+ <table class="studentTable">
+        <th>Name</th>
+        <th>Register_no</th>
+        <th>Present</th>
+        <th>Absent</th>
+
+       <% if (studentdata && studentdata.length > 0) { %>
+
+      <% for( let index = 0; index < studentdata.length; index++ ) { %>
+         <tr>
+             <td><%=studentdata[index].name%></td> 
+             <td><%=studentdata[index].register_no %></td> 
+             <td> <input type="radio" name="attendence of <%=studentdata[index].register_no %>" value="present"></td> 
+             <td><input type="radio" name="attendence of <%=studentdata[index].register_no %>" value="absent"></td> 
+            </tr>
+          
+      <% } %>  
+
+     <% } %> 
+    </table>
+    <!-- <button type="submit" onclick=")">save Attendence</button> -->
+  <p>Total no of Present : <span id="totalPresent"></span></p>
+   <p>Total no of Absent : <span id="totalAbsent"></span></p>
+   </div>
+
+
+   <script>
+    const totalPresent =  document.getElementById('totalPresent');
+    const totalAbsent =  document.getElementById('totalAbsent');
+
+   const radios = document.querySelectorAll('input[type="radio"]');
+     
+   function totalAttendance(){
+     let PresentCount = 0;
+     let AbsentCount = 0;
+
+     radios.forEach(radio =>{
+
+       if(radio.checked){
+         if(radio.value == "present"){
+           PresentCount ++;
+          }else if(radio.value == "absent"){
+           AbsentCount ++;
+          }
+       }
+     });
+
+     totalAbsent.textContent = AbsentCount;
+     totalPresent.textContent = PresentCount;
+
+     radios.forEach(radio => {
+      radio.addEventListener('change', totalAttendance);
+    });
+    
+    }
+   totalAttendance()
+
+    function logout(event){
+      event.preventDefault();
+      localStorage.removeItem("token");
+      document.querySelector('#logout').submit();
+    }
+
+    const tokenCheck = localStorage.getItem("token");
+    if(!tokenCheck){
+      document.body.innerHTML = `<h1>Cannot access without login</h1>
+        <p>For login <a href='/login'>click here</a></p>`;
+    }
+     
+  </script>
+
+
+
+
+
+
+</body>
+</html>

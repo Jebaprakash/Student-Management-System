@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Register</title>
+
+   <style>
+    body{
+      background: linear-gradient(90deg, #72C6EF, #004E8F);
+      display: flex;
+      justify-content: center;
+    }
+    .form{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(90deg, #FFFFFF, #F0F0F0);
+      height: 450px;
+      width: 350px;
+      border: 0px solid black;
+      border-radius: 10px;
+      margin-top: 100px;
+      /* padding-left: 200px; */
+
+    }
+    .input{
+      width: 250px;
+      font-size: medium;
+    }
+    h1{
+
+    }
+   
+     p{
+        color: red;
+     }
+   </style>
+</head>
+<body>
+    <div class="form">
+  <form id="formValid" action="/submit" method="post">
+    <h1 style="text-align:center; "> Register</h1>
+     <% if (typeof check_email !== "undefined") { %>
+      <p style="color:red;">Email  is already registered</p>
+    <% } %>
+   <br>
+    <label for="">Name</label><br>
+    <input type="text" name="name" id="name" placeholder="Enter name" value="<%= name %>" class="input">
+    <p id="nameValid"></p>
+    <label for="">Email</label><br>
+    <input type="email" name="email" id="email" placeholder="enter email" required value="<%= email %>" class="input">
+    <p id="emailValid"></p>
+    <label for="">Create Password</label><br>
+    <input type="password" name="password" id="password" placeholder="enter password" value="<%= password %>" class="input">
+    <p id="passwordValid"></p>    
+    <label for="">Confirm Password</label><br>
+    <input type="password" name="confirm" id="confirm" placeholder="Confirm password" value="<%= confirm %>" class="input">
+    <p id="passwordValid2"></p>
+    <button type="submit" onclick="verificationform()" style="margin-left: 80px;">Register</button>
+    </form>     
+    <form action="/login" method="get">
+      <p style="color: #0066ff;">if you already have an account </p>
+    <button onclick=""  style="margin-left: 60px;">Login</button>
+    <p id="demo"></p>
+    </form>
+    </div>
+   
+
+    <script>
+   
+    
+   
+    // document.querySelector("#formValid").addEventListener("submit",
+   
+     //  fetch("/submit", { method: "POST" }) 
+     //  .then(
+     function verificationform(){
+      event.preventDefault();
+      let name = document.querySelector("#name").value;
+      let email = document.querySelector("#email").value;
+      let password = document.querySelector("#password").value;
+      let confirm = document.querySelector("#confirm").value;
+
+      let nameerror = document.getElementById("nameValid")
+      let emailerror = document.getElementById("emailValid")
+      let passworderror = document.getElementById("passwordValid")
+      let confirmerror = document.getElementById("passwordValid2")
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+
+      nameerror.innerHTML = " "
+      emailerror.innerHTML = " "
+      passworderror.innerHTML = " "
+      confirmerror.innerHTML = " "
+      let isValid = true;
+
+       if(name.length < 4){ 
+        isValid =false       
+        // event.preventDefault(); 
+         document.getElementById("nameValid").innerHTML = "name must contain minimum 4 letter"
+        }
+        if(password.length < 8){    
+        isValid =false      
+        // event.preventDefault(); 
+        document.getElementById("password").style.color = "red"
+        document.getElementById("passwordValid").innerHTML = "password must contain minimum 8 character"
+        
+       }else if(password != confirm){
+        // event.preventDefault(); 
+        isValid =false  
+        // document.getElementById("confirm").style.color = "red"
+        document.getElementById("passwordValid2").innerHTML = "Doesn't match password"
+     }
+       if(!emailPattern.test(email)){
+            isValid =false
+            document.getElementById('emailValid').innerHTML = " enter a valid email";
+        }
+
+        // if()
+     if(isValid == true){
+      document.querySelector('#formValid').submit();
+     }
+     }
+    // )
+// )
+   
+    
+    </script>
+</body>
+</html>

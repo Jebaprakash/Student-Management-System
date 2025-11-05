@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Management Dashboard</title>
+  <style>
+body {
+  background-color: #fff;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#school-name {
+  text-align: center;
+  padding: 10px;
+  color: #00809D;
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 50px;
+  background-color: #00809D;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-btn {
+  background-color: #708993;
+  /* color: #F0F0F0; */
+  border: none;
+  padding: 12px 20px;
+  margin-left: 5px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.nav-btn:hover {
+  background-color: #607780;
+}
+
+#add-btn {
+  margin-top: 15px;
+  margin-left: 20px;
+  background-color: #00A5BD;
+  border-radius: 8px;
+}
+
+#cancel-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.Form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  width: auto;
+  margin: 20px 80px;
+  background: linear-gradient(90deg, #FFFFFF, #F0F0F0);
+  border: 2px solid #000;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.input {
+  height: 45px;
+  width: 400px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+  padding: 8px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #00809D;
+  box-shadow: 0 0 5px rgba(0,128,157,0.3);
+}
+
+.ratio {
+  height: 18px;
+  width: 18px;
+  margin: 10px 10px 0 0;
+  cursor: pointer;
+}
+
+.btn {
+  background-color: #708993;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #607780;
+}
+
+.student-Table {
+  margin: 50px 100px;
+}
+
+.studentTable {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.studentTable th, .studentTable td {
+  border: 1px solid #000;
+  text-align: center;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.studentTable th {
+  background-color: #00809D;
+  color: #fff;
+  font-weight: bold;
+}
+
+.studentTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table-btn {
+  background-color: #77BEF0;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.table-btn:hover {
+  background-color: #5faede;
+}
+
+.action {
+  width: 200px;
+}
+
+p {
+  color: red;
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+#addStudent,
+#editStudent {
+  display: none;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px auto;
+  width: 80%;
+  background-color: #fafafa;
+}
+
+  </style>
+</head>
+<body>
+<% if (token) { %>
+    <p id="token" hidden><%= token %> </p>
+<% } %>
+
+  <div id="school-name">
+    <h1>J.P School</h1>
+   </div>
+    <div class="nav-bar">
+    <form action="/student" method="get"><button class="nav-btn"><b style="color: #F0F0F0;">Student</b></button></form>
+    <form action="/attendence" method="get"><button class="nav-btn"><b>Attendance</b></button></form>
+    <form action="/marks" method="get"><button class="nav-btn"><b>Marks</b></button></form>
+    <form action="/logout" method="get" id="logout" ><button onclick="logout(event)" class="nav-btn"><b>Logout</b></button></form>
+    </div>
+
+  <div>
+    <button onclick="showAddForm(event)" class="nav-btn" id="add-btn"><b>+ Add Student</b></button>
+  </div>
+
+  <% if (error && error.length > 0) { %>
+    <p style="color:red;"><%= error %></p>
+  <% } %>
+
+
+  <div id="addStudent" style="display:none; border:2px solid black; padding:15px; margin:10px 0;">
+    <form action="/student/data" method="post" id="studentForm" class="Form" onsubmit="validateStudent(event)">
+      <label>First Name</label>
+      <input type="text" name="fname" class="fname input" value="<%= fname %>" /><br/>
+      <p class="fnameverify" style="color:red"></p>
+
+      <label>Last Name</label>
+      <input type="text" name="lname" class="lname input" value="<%= lname %>" /><br/>
+      <p class="lnameverify" style="color:red"></p>
+
+      <label>Register No</label>
+      <input type="number" name="register_no" class="register_no input" value="<%= register_no %>" /><br/>
+      <p class="register_noVerify" style="color:red"></p>
+
+      <label>Email</label>
+      <input type="email" name="email" class="email input" value="<%= email %>" /><br/>
+      <p class="emailverify" style="color:red"></p>
+
+      <label>Phone</label>
+      <input type="number" name="phone_no" class="phone_no input" value="<%= phone_no %>" /><br/>
+      <p class="phone_noverify" style="color:red"></p>
+
+      <label>DOB</label>
+      <input type="date" name="dob" class="dob input" value="<%= dob %>" /><br/>
+      <p class="dobverify" style="color:red"></p>
+    <div>
+      <label>Gender</label><br/>
+      <input type="radio" name="gender" value="Male" class="ratio"/> Male
+      <input type="radio" name="gender" value="Female"  class="ratio"/> Female
+      <input type="radio" name="gender" value="Others"   class="ratio"/> Others
+      </div>
+      <br/>
+
+      <label>Address</label>
+      <input type="text"  name="address" class="address input" value="<%= address %>" /><br/>
+      <p class="addressverify" style="color:red"></p>
+      
+      <button type="submit" class="btn" style="background-color: #77BEF0;">Submit</button><br>
+      
+     
+    </form>
+    <div id="cancel-btn">
+    <form action="/cancel" method="get">
+        <button type="submit" class="btn" style="background-color: #FB4141;"> cancel</button>
+      </form>
+      </div>
+  </div>
+
+<div class="student-Table">
+  <table border="2" style="width:100%; border-collapse:collapse; " >
+    <tr>
+      <th>Name</th>
+      <th>Register No</th>
+      <th>Action</th>
+    </tr>
+    <% if (studentdata && studentdata.length > 0) { %>
+      <% studentdata.forEach((s) => { %>
+        <tr>
+          <td><%= s.name %></td>
+          <td><%= s.register_no %></td>
+          <td class="action">
+            <form action="/edit/<%= s.id %>" method="get" style="display: inline;">
+              <button class="table-btn" style="background-color: #77BEF0;">Edit</button>
+            </form>
+            <form action="/delete" method="post" style="display: inline;">
+              <input type="hidden" name="register_no" value="<%= s.register_no %>"/>
+              <button class="table-btn" style="background-color: #FB4141;">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    <% } %>
+  </table>
+</div>
+  <!-- Edit Form -->
+  <div id="editStudent" style="display:none; border:2px solid black; padding:15px; margin:10px 0;">
+    <form action="/edit/<%= id %>" method="post" id="editForm" class="Form">
+      <label>First Name</label>
+      <input type="text" name="fname" class="editfname input" value="<%= fname %>" /><br>
+      <p class="editfnameverify" style="color:red"></p>
+
+      <label>Last Name</label>
+      <input type="text" name="lname" class="editlname input" value="<%= lname %>" /><br>
+      <p class="editlnameverify" style="color:red"></p>
+
+      <label>Register No</label>
+      <input type="number" name="register_no" class="editregister_no input" value="<%= register_no %>" /><br>
+      <p class="editregister_noVerify" style="color:red"></p>
+
+      <label>Email</label>
+      <input type="email" name="email" class="editemail input" value="<%= email %>" /><br>
+      <p class="editemailverify" style="color:red"></p>
+
+      <label>Phone</label>
+      <input type="number" name="phone_no" class="editphone_no input" value="<%= phone_no %>" /><br>
+      <p class="editphone_noverify" style="color:red"></p>
+
+      <label>DOB</label>
+      <input type="date" name="dob" class="editdob" value="<%= dob %>" /><br>
+      <p class="editdobverify" style="color:red"></p>
+
+      <label>Gender</label><br/>
+      <div>
+      <input type="radio" name="gender" value="Male" <%= gender === "Male" ? "checked" : "" %> class="ratio"/> Male
+      <input type="radio" name="gender" value="Female" <%= gender === "Female" ? "checked" : "" %> class="ratio"/> Female
+      <input type="radio" name="gender" value="Others" <%= gender === "Others" ? "checked" : "" %> class="ratio"/> Others
+    </div>
+      <br>
+
+      <label>Address</label>
+      <input type="text" name="address" class="editaddress input" value="<%= address %>" /><br>
+      <p class="editaddressverify" style="color:red"></p>
+
+      <button type="submit" onclick="validateEdit(event)" class="btn" style="background-color: #77BEF0;">Save</button>
+      <form action="/cancel" method="get">
+        <button type="submit" class="btn" style="background-color: #FB4141;"> cancel</button>
+      </form>
+    </form>
+  </div>
+  
+
+  <script>
+    function showAddForm(e){
+      e.preventDefault();
+      document.getElementById("addStudent").style.display = "block";
+      document.getElementById("editStudent").style.display = "none";
+    }
+
+    <% if (id && id.length > 0) { %>
+      document.getElementById("editStudent").style.display = "block";
+      document.getElementById("addStudent").style.display = "none";
+      document.querySelector("table").style.display = "none";
+    <% } %>
+
+    function validateStudent(event) {
+      const fname = document.querySelector(".fname").value.trim();
+      const lname = document.querySelector(".lname").value.trim();
+      const email = document.querySelector(".email").value.trim();
+      const register_no = document.querySelector(".register_no").value.trim();
+      const phone_no = document.querySelector(".phone_no").value.trim();
+      const address = document.querySelector(".address").value.trim();
+      const dob = document.querySelector(".dob").value.trim();
+      let valid = true;
+
+      document.querySelectorAll("p").forEach(p => p.innerText = "");
+ 
+      if (fname.includes(" ")) {
+        document.querySelector(".fnameverify").innerText = "First name must not contain space";
+        valid = false;
+      }
+      if (fname.length < 3) {
+        document.querySelector(".fnameverify").innerText = "First name must be at least 3 letters";
+        valid = false;
+      }
+      if (lname.length === 0) {
+        document.querySelector(".lnameverify").innerText = "Last name is required";
+        valid = false;
+      }
+      if (register_no.length != 12) {
+        document.querySelector(".register_noVerify").innerText = "Register number must be 12 digits";
+        valid = false;
+      }
+      if (phone_no.length != 10) {
+        document.querySelector(".phone_noverify").innerText = "Invalid phone number";
+        valid = false;
+      }
+      if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        document.querySelector(".emailverify").innerText = "Invalid email";
+        valid = false;
+      }
+      if (address.length < 10) {
+        document.querySelector(".addressverify").innerText = "Enter valid address";
+        valid = false;
+      }
+      if (!dob) {
+        document.querySelector(".dobverify").innerText = "Select valid DOB";
+        valid = false;
+      }
+
+      if (!valid) event.preventDefault();
+    }
+
+   
+    function validateEdit(event) {
+      const fname = document.querySelector(".editfname").value.trim();
+      const lname = document.querySelector(".editlname").value.trim();
+      const email = document.querySelector(".editemail").value.trim();
+      const register_no = document.querySelector(".editregister_no").value.trim();
+      const phone_no = document.querySelector(".editphone_no").value.trim();
+      const address = document.querySelector(".editaddress").value.trim();
+      const dob = document.querySelector(".editdob").value.trim();
+      let valid = true;
+
+      document.querySelectorAll("p").forEach(p => p.innerText = "");
+
+      if (fname.length < 3) {
+        document.querySelector(".editfnameverify").innerText = "First name must be at least 3 letters";
+        valid = false;
+      }
+      if (lname.length === 0) {
+        document.querySelector(".editlnameverify").innerText = "Last name is required";
+        valid = false;
+      }
+      if (register_no.length != 12) {
+        document.querySelector(".editregister_noVerify").innerText = "Register number must be 12 digits";
+        valid = false;
+      }
+      if (phone_no.length != 10) {
+        document.querySelector(".editphone_noverify").innerText = "Invalid phone number";
+        valid = false;
+      }
+      if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        document.querySelector(".editemailverify").innerText = "Invalid email";
+        valid = false;
+      }
+      if (address.length < 10) {
+        document.querySelector(".editaddressverify").innerText = "Enter valid address";
+        valid = false;
+      }
+      if (!dob) {
+        document.querySelector(".editdobverify").innerText = "Select valid DOB";
+        valid = false;
+      }
+
+      if (!valid) event.preventDefault();
+    }
+    
+     const token = document.querySelector('#token');
+    if(token){
+      localStorage.setItem("token", token.innerHTML);
+    }
+
+    // logout function
+    function logout(event){
+      event.preventDefault();
+      localStorage.removeItem("token"); // remove token
+      document.querySelector('#logout').submit();
+    }
+
+    // protect page
+    const tokenCheck = localStorage.getItem("token");
+    if(!tokenCheck){
+      document.body.innerHTML = `<h1>Cannot access without login</h1>
+        <p>For login <a href='/login'>click here</a></p>`;
+    }
+  </script>
+</body>
+</html>

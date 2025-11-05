@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>marks</title>
+  <style>
+     body {
+      background-color: #fff;
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+      color: #333;
+    }
+
+    .nav-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      background-color: #00809D;
+      height: 50px;
+      padding-right: 20px;
+    }
+
+    .nav-btn {
+      background-color: #708993;
+      /* color: #fff; */
+      border: none;
+      padding: 12px 20px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: 0.2s ease-in-out;
+    }
+
+    .nav-btn:hover {
+      background-color: #5a6e77;
+    }
+
+    .student-Table {
+      display: flex;
+      justify-content: center;
+      margin: 40px auto;
+    }
+
+    form {
+      text-align: center;
+    }
+
+    label {
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    select {
+      padding: 6px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+    }
+
+    .studentTable {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .studentTable table {
+      border: 2px solid black;
+      border-collapse: collapse;
+      width: 80%;
+      text-align: center;
+    }
+
+    .studentTable th, .studentTable td {
+      border: 1px solid black;
+      padding: 10px;
+    }
+
+    input.mark {
+      width: 80px;
+      padding: 6px;
+      text-align: center;
+    }
+
+    #total {
+      border: 1px solid #333;
+      padding: 10px;
+      width: 100px;
+      margin: 0 auto;
+    }
+    .save-btn {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .save-btn button {
+      background-color: #00809D;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
+    }
+
+    .save-btn button:hover {
+      background-color: #006a82;
+    }
+
+    #markError {
+      text-align: center;
+      margin-top: 10px;
+      color: red;
+      font-weight: bold;
+    }
+
+    .mark_table {
+      width: 90%;
+      margin: 40px auto;
+      border-collapse: collapse;
+      border: 2px solid black;
+      text-align: center;
+    }
+
+    .mark_table th, .mark_table td {
+      border: 1px solid black;
+      padding: 10px;
+    }
+
+    .mark_table th {
+      background-color: #e0f3f6;
+    }
+
+    .mark_table td button {
+      background-color: #708993;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s ease-in-out;
+    }
+
+    .mark_table td button:hover {
+      background-color: #5a6e77;
+    }
+  </style>
+</head>
+<body>
+ <div id="school-name">
+     <h1>J.P School</h1>
+   </div>
+    <div class="nav-bar">
+   <form action="/student" method="get"><button class="nav-btn"><b>Student</b></button></form>
+    <form action="/attendence" method="get"><button class="nav-btn"><b>Attendance</b></button></form>
+    <form action="/marks" method="get"><button class="nav-btn"><b  style="color: #F0F0F0;">Marks</b></button></form>
+    <form action="/logout" method="get" id="logout" ><button onclick="logout(event)" class="nav-btn"><b>Logout</b></button></form>
+    </div>
+  <div id="addForm" class="student-Table">
+  <form action="/add/marks" method="post" onsubmit="return markValidation(event)">
+    <label for="register_no">Register_no</label>
+    <select id="register_no" name="register_no">
+      <option value="<%= register_no %>"> <%= name %></option>
+      <% if (studentdata && studentdata.length > 0) { %>
+        <% for(let index = 0; index < studentdata.length; index++) { %>
+          <option value="<%= studentdata[index].register_no %>" title="<%= studentdata[index].register_no %>">
+            <%= studentdata[index].name %>
+          </option>
+        <% } %>
+      <% } %>
+    </select>
+   <div class="studentTable">
+    <table >
+      <tr>
+        <th>Tamil</th>
+        <th>English</th>
+        <th>Maths</th>
+        <th>Science</th>
+        <th>Social Science</th>
+        <th>Total</th>
+      </tr>
+      <tr>
+        <td><input type="number" name="tamil" id="tamil" class="mark"  value="<%= tamil %>"></td>
+        <td><input type="number" name="english" id="english" class="mark"value="<%= english %>" ></td>
+        <td><input type="number" name="maths" id="maths" class="mark" value="<%= maths %>"></td>
+        <td><input type="number" name="science" id="science" class="mark" value="<%= science %>"></td>
+        <td><input type="number" name="social_science" id="social_science" class="mark" value="<%= social_science %>"></td>
+        <td><p style="border: 1px solid #333; padding: 10px; width: 100px;" id="total" > <%= total %></p></td>
+      </tr>
+    </table>
+    </div>
+
+    <div class="save-btn" >
+    <p id="markError" style="color:red;"></p>
+     <button type="submit" id="add-btn" style="display: inline;">add</button>
+    </form>
+    <form action="/marks/update" method="post" onsubmit="return handleSave(event)">
+     <button type="submit" style="display: inline;">Save</button>
+
+        <input type="hidden" value="<%= register_no %>" name="register_no" hidden>
+        <input type="number" name="tamil" hidden>
+        <input type="number" name="english" hidden>
+        <input type="number" name="maths" hidden>
+        <input type="number" name="science" hidden>
+        <input type="number" name="social_science" hidden>
+     </form>
+     </div>
+    </div>
+ 
+
+ 
+  <table class="mark_table">
+    <th> Register_no</th>
+    <th> name</th>
+    <th>Tamil</th>
+    <th>English</th>
+    <th>Maths</th>
+    <th>Science</th>
+    <th>Social Science</th>
+    <th>Total</th>
+    <th>Grade</th>
+    <th>Action</th>
+
+     <% student_marks.forEach(marks => { %>
+       <tr>
+        <td ><p class="register_no"><%= marks.register_no %></p> </td>
+        <td><%= marks.name %></td>
+        <td><%= marks.tamil %></td>
+        <td><%= marks.english %></td>
+        <td><%= marks.maths %></td>
+        <td><%= marks.science %></td>
+        <td><%= marks.social_science %></td>
+        <td><%= marks.total %></td>
+        <td><%= marks.grade %></td>
+        <td>
+          <form action="/marks/edit/<%= marks.id %>" method="get" id="">
+             <button type="submit" id="edit-btn">Edit</button>
+            
+            <input type="hidden" name="id" value="<%= marks.id %>">
+          </form>
+          <form action="/marks/delete" method="post">
+             <button>Delete</button>
+              <input type="hidden" name="register_no" value="<%= marks.register_no %>"/>
+          </form>
+      </td>
+       </tr>
+     <% }) %>
+
+  </table>
+
+ 
+  <script>
+  let student = [];
+    setTimeout(()=>{
+      const studentName = document.querySelectorAll('.register_no');
+      studentName.forEach((Name)=>{
+        student.push(Name.textContent.trim());
+      })
+    },1000);
+
+  
+   function markValidation(event) {
+    const subjects = ['tamil', 'english', 'maths', 'science', 'social_science'];
+    for (let subject of subjects) {
+        const mark = document.getElementById(subject).value;
+        if (mark === "" || mark < 0 || mark > 100) {
+            document.getElementById('markError').innerText = `${subject} mark should be between 0 and 100`;
+            event.preventDefault();
+            return false;
+        }
+    }
+    document.getElementById('markError').innerText = "";
+     const selectStudent = document.getElementById('register_no').value;
+    if (student.includes(selectStudent)) {
+         event.preventDefault();
+     document.getElementById('markError').innerText = "This student's marks already exist.";
+     return false;
+     } else {
+     student.push(selectStudent);
+     document.getElementById('markError').innerText = "";
+     }
+   return true;
+}
+
+    document.querySelectorAll('.mark').forEach(input =>{
+       input.addEventListener('input',()=>{
+        let result = 0;
+        document.querySelectorAll('.mark').forEach(mark =>{
+          if(mark.value){
+            result += Number(mark.value);
+          }
+        });
+        document.getElementById('total').innerHTML = result;
+       });
+    });
+
+   
+
+   
+     function edit()
+    {
+      event.preventDefault();
+      document.getElementById('addForm').style.display = "none";
+    } 
+  function handleSave(event) {
+  const fields = ['tamil', 'english', 'maths', 'science', 'social_science'];
+
+  fields.forEach(field => {
+    const first = document.querySelector(`form[action='/add/marks'] input[name='${field}']`);
+    const second = document.querySelector(`form[action='/marks/update'] input[name='${field}']`);
+    if (first && second) {
+      second.value = first.value; 
+    }
+  });
+
+  const subjects = ['tamil', 'english', 'maths', 'science', 'social_science'];
+  for (let subject of subjects) {
+    const mark = document.getElementById(subject).value;
+    if (mark === "" || mark < 0 || mark > 100) {
+      document.getElementById('markError').innerText = `${subject} mark should be between 0 and 100`;
+      event.preventDefault();
+      return false;
+    }
+  }
+
+  document.getElementById('markError').innerText = "";
+  return true;
+}
+  function logout(event){
+      event.preventDefault();
+      localStorage.removeItem("token"); // remove token
+      document.querySelector('#logout').submit();
+    }
+
+    // protect page
+    const tokenCheck = localStorage.getItem("token");
+    if(!tokenCheck){
+      document.body.innerHTML = `<h1>Cannot access without login</h1>
+        <p>For login <a href='/login'>click here</a></p>`;
+    } 
+
+  </script>
+</body>
+</html>

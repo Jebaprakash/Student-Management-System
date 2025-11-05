@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+    body{
+      background: linear-gradient(90deg, #72C6EF, #004E8F);
+      display: flex;
+      justify-content: center;
+    }
+    .login{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(90deg, #FFFFFF, #F0F0F0);
+      height: 300px;
+      width: 400px;
+      border: 2px solid black;
+      border-radius: 10px;
+      margin-top: 180px;
+    }
+    #login-btn{
+        margin-left: 100px;
+    }
+    .input{
+         width: 250px;
+      font-size: medium;
+    }
+    </style>
+</head>
+<body>
+    <div class="login">
+        <p>Login</p>
+    <form action="/login/user" method="post">
+        <label for="email">Email</label><br>
+        <input type="email" name="email" id="email" class="input" required><br>
+        <br>
+        <label for="password">Password</label><br>
+        <input type="text" name="password" id="password" class="input" required>
+        <p><%= error %></p>
+        <br>
+        <button type="submit" id="login-btn">Login</button>
+  </form>
+    <h3>if you don't have an account </h3><a href="http://localhost:8080/">Register</a>
+ 
+
+    </div>
+</body>
+</html>
